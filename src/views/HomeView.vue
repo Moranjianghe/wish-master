@@ -4,14 +4,14 @@ import { useRouter } from 'vue-router';
 import HeaderLogo from '../components/HeaderLogo.vue';
 import WishInput from '../components/WishInput.vue';
 import StepFlow from '../components/StepFlow.vue';
-import WishResultCard from '../components/WishResultCard.vue'; // 暂时复用组件，建议后续改名
+import WishResultCard from '../components/WishResultCard.vue';
 import AppFooter from '../components/AppFooter.vue';
 
 // 路由
 const router = useRouter();
 
 // 状态管理
-// 0: 输入愿望, 1: 审查愿望, 2: 正在构建现实(钻漏洞), 3: 展示结果
+// 0: 输入愿望, 1: 审查愿望(3秒), 2: 正在构建现实/钻漏洞(API请求期间), 3: 展示结果
 const currentStep = ref(0); 
 const wishText = ref('');
 const isLoading = ref(false);
@@ -24,31 +24,60 @@ const wishResult = reactive({
 });
 
 /**
- * 处理愿望提交逻辑
+ * 处理愿望提交逻辑 - 加入了“恶意”延迟版
  */
 async function handleWishSubmit(wish) {
-  currentStep.value = 1; // 进入“审查与构建”状态
+  // 1. 开始：进入【审查阶段】
+  // 此时 StepFlow 显示第一步：正在扫描灵魂签署痕迹...
+  currentStep.value = 1; 
   isLoading.value = true;
+  error.value = null; // 清空之前的错误
   
   try {
+    // 😈 关键点：强行制造 3 秒的心理压迫感
+    // 让用户盯着进度条发慌
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // 2. 停顿结束：进入【寻找漏洞阶段】
+    // 此时 StepFlow 显示第二步：正在检索因果律漏洞...
+    currentStep.value = 2;
+
+    // 3. 真正发起 API 请求（就在步骤 2 显示的时候）
+    // 这里复用原本的 fetch 逻辑
     const response = await fetch('/api/validateWish', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ wish })
     });
+    
+    if (!response.ok) {
+      throw new Error(`因果连接中断: ${response.status}`);
+    }
+
     const data = await response.json();
 
-    if (data.result.category === 'block') {
+    // 4. 处理返回结果
+    if (data.result && data.result.category === 'block') {
       router.push('/error'); // 违规处理
       return;
     }
 
-    // 直接拿到了结果！
+    // 拿到结果
     wishResult.confirmed_wish = data.result.confirmed_wish;
     wishResult.realization_scenario = data.result.scenario;
     
-    currentStep.value = 3; // 直接跳到展示结果
+    // 为了防止 API 响应太快导致步骤 2 闪退，
+    // 我们可以再额外增加一点点“构建现实”的时间（可选，这里加了1秒）
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // 5. 展示最终审判
+    currentStep.value = 3; 
+
   } catch (err) {
-    error.value = "因果律崩溃了w";
+    console.error(err);
+    error.value = "系统在窥探命运时遭遇了不可抗力...请重试。";
+    // 出错后是否要重置回步骤0，看你喜好，这里暂时保留在当前界面方便看报错
+    currentStep.value = 0;
   } finally {
     isLoading.value = false;
   }
@@ -64,54 +93,34 @@ function handleRestart() {
   wishResult.confirmed_wish = '';
   wishResult.realization_scenario = '';
 }
-
-// --- API 调用函数 ---
-
-async function validateWish(wish) {
-  const response = await fetch('/api/validateWish', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ wish })
-  });
-  if (!response.ok) throw new Error(`验证失败: ${response.status}`);
-  return await response.json();
-}
-
-async function generateWishRealization(wish) {
-  // 注意：这里建议后端接口也统一命名为 generateWish 
-  const response = await fetch('/api/generateWish', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ wish })
-  });
-  
-  if (!response.ok) throw new Error(`愿望实现失败: ${response.status}`);
-  return await response.json();
-}
 </script>
 
 <template>
   <div class="home-container">
     <HeaderLogo />
     
-    <div v-if="error" class="error-message">
-      {{ error }}
-    </div>
+    <transition name="fade">
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
+    </transition>
     
-    <div v-if="currentStep === 0" class="input-section">
-      <WishInput @submit="handleWishSubmit" />
-    </div>
-    
-    <div v-else-if="currentStep < 3" class="processing-section">
-      <StepFlow :current-step="currentStep" />
-    </div>
-    
-    <div v-else class="result-section">
-      <WishResultCard 
-        :sign-data="wishResult" 
-        @restart="handleRestart"
-      />
-    </div>
+    <transition name="fade" mode="out-in">
+      <div v-if="currentStep === 0" class="input-section" key="input">
+        <WishInput @submit="handleWishSubmit" />
+      </div>
+      
+      <div v-else-if="currentStep < 3" class="processing-section" key="processing">
+        <StepFlow :current-step="currentStep" />
+      </div>
+      
+      <div v-else class="result-section" key="result">
+        <WishResultCard 
+          :sign-data="wishResult" 
+          @restart="handleRestart"
+        />
+      </div>
+    </transition>
     
     <AppFooter />
   </div>
@@ -127,14 +136,17 @@ async function generateWishRealization(wish) {
   flex-direction: column;
 }
 
+/* 错误提示条：加一点阴影和深色边框 */
 .error-message {
-  background-color: #fff3e0;
-  color: #e65100;
+  background-color: #fff5f5;
+  color: #c0392b;
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 4px;
   margin: 16px 0;
-  border: 1px solid #ffe0b2;
+  border-left: 4px solid #c0392b;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   text-align: center;
+  font-size: 0.9rem;
 }
 
 .input-section, .processing-section, .result-section {
@@ -143,5 +155,17 @@ async function generateWishRealization(wish) {
   justify-content: flex-start;
   padding: 10px 0;
   margin-top: -10px;
+  flex: 1; /* 让内容区占据剩余空间 */
+}
+
+/* 简单的淡入淡出过渡 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

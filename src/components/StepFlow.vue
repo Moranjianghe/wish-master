@@ -6,16 +6,15 @@ const props = defineProps({
   currentStep: {
     type: Number,
     required: true,
-    // 现在 1 是审查，2 是生成场景，3 是准备展示
     validator: (value) => value >= 1 && value <= 3
   }
 });
 
-// 步骤文本：改成了更有“完美许愿器”风格的文案w
+// 步骤文本：文案升级！更加“谜语人”和阴谋论风格
 const steps = [
-  { id: 1, text: '正在审查愿望契约...' },
-  { id: 2, text: '正在寻找逻辑漏洞...' },
-  { id: 3, text: '正在构建讽刺现实...' }
+  { id: 1, text: '正在扫描灵魂签署痕迹...' }, // 原：正在审查... -> 现在的感觉：查你户口
+  { id: 2, text: '正在检索因果律漏洞...' },   // 原：寻找漏洞... -> 现在的感觉：给你挖坑
+  { id: 3, text: '正在生成不可逆的现实...' }   // 原：构建现实... -> 现在的感觉：你逃不掉了
 ];
 
 // 计算当前激活的步骤
@@ -57,7 +56,6 @@ const activeStep = computed(() => {
 </template>
 
 <style scoped>
-/* 样式部分基本保持原样，但我调了一下颜色，让它看起来不那么“求签” */
 .step-flow {
   width: 100%;
   max-width: 500px;
@@ -67,7 +65,7 @@ const activeStep = computed(() => {
 .steps-container {
   display: flex;
   flex-direction: column;
-  gap: 24px; /* 增加一点间距，显得更大气 */
+  gap: 24px;
 }
 
 .step {
@@ -86,26 +84,29 @@ const activeStep = computed(() => {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #f5f5f5;
-  border: 2px solid #ddd;
+  background-color: transparent; /* 变得更通透冷漠 */
+  border: 2px solid #bdc3c7;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  color: #999;
-  transition: all 0.3s ease;
+  color: #bdc3c7;
+  transition: all 0.5s ease;
+  font-family: 'Courier New', monospace; /* 机打风格数字 */
 }
 
-/* 激活和完成时使用更符合“契约”感的墨色或深青色 */
+/* 激活时：变成像是在警告的深红/紫色，或者保持高冷的黑色 */
 .step.active .step-circle {
   background-color: #2c3e50;
   border-color: #2c3e50;
   color: white;
+  box-shadow: 0 0 10px rgba(44, 62, 80, 0.3); /* 微微发光 */
 }
 
+/* 完成时：不再是安全的绿色，而是“契约已定”的紫色 */
 .step.completed .step-circle {
-  background-color: #42b883; /* 完成仍用绿色，表示安全通过 */
-  border-color: #42b883;
+  background-color: #8e44ad;
+  border-color: #8e44ad;
   color: white;
 }
 
@@ -120,13 +121,13 @@ const activeStep = computed(() => {
 .step-line {
   height: 24px;
   width: 2px;
-  background-color: #ddd;
+  background-color: #eee;
   margin-top: 4px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.5s ease;
 }
 
 .step.completed .step-line {
-  background-color: #42b883;
+  background-color: #8e44ad; /* 连线也变成紫色 */
 }
 
 .step-content {
@@ -136,17 +137,20 @@ const activeStep = computed(() => {
 .step-text {
   margin: 0;
   font-size: 1rem;
-  color: #999;
-  transition: color 0.3s ease;
+  color: #95a5a6;
+  transition: all 0.5s ease;
 }
 
 .step.active .step-text {
   color: #2c3e50;
   font-weight: 600;
+  letter-spacing: 1px; /* 激活时字间距拉大，增加压迫感 */
 }
 
 .step.completed .step-text {
-  color: #42b883;
+  color: #8e44ad;
+  text-decoration: line-through; /* 完成后划掉，表示“命运已定，无法更改” */
+  opacity: 0.7;
 }
 
 .step-animation {
@@ -160,14 +164,14 @@ const activeStep = computed(() => {
   height: 6px;
   border-radius: 50%;
   background-color: #2c3e50;
-  animation: pulse 1.5s infinite ease-in-out;
+  animation: pulse 1.4s infinite ease-in-out;
 }
 
 .dot:nth-child(2) { animation-delay: 0.2s; }
 .dot:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(0.8); opacity: 0.4; }
+  0%, 100% { transform: scale(0.5); opacity: 0.3; }
   50% { transform: scale(1.2); opacity: 1; }
 }
 

@@ -41,7 +41,7 @@ export async function onRequest(context) {
   try {
     const requestData = await context.request.json();
     const userInput = requestData.wish || '';
-    const MAX_WISH_LENGTH = 50;
+    const MAX_WISH_LENGTH = 80;
 
     if (!userInput.trim()) {
       return new Response(JSON.stringify({ error: '愿望内容不能为空' }), { status: 400, headers: responseHeaders });

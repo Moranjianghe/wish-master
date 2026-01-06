@@ -7,7 +7,8 @@ const emit = defineEmits(['submit']);
 // 愿望输入
 const wishInput = ref('');
 const isSubmitting = ref(false);
-const maxLength = 50;
+// 呜呜，把字数限制提升到80啦
+const maxLength = 80;
 
 // 更改为更有“欲望感”的示例
 const exampleWishes = [
