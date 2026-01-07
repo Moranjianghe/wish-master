@@ -20,11 +20,12 @@ const closeSupport = () => {
     <div class="system-log">
       <span class="log-tag">[ System Patch v1.2 ]</span>
       <p>
-        因果律稳压器已上线。为防止现实扭曲场过载，系统强制执行频率熔断协议。
-        <span class="creepy-note">
-          （注：不要试图短时间内透支太多“可能性”。当欲望的噪音太大时……往往就听不见代价靠近的脚步声了。）
-        </span>
+        因果律稳压器已上线。防止现实扭曲场过载。
       </p>
+    </div>
+
+    <div class="hidden-protocol" @click="toggleSupport" title="建立连接">
+      [ <span class="protocol-icon">⚡</span> 支持/连接 <span class="protocol-icon">⚡</span>]
     </div>
 
     <div class="disclaimer">
@@ -45,9 +46,7 @@ const closeSupport = () => {
 
     <div class="warning-text">CAVEAT EMPTOR</div>
 
-    <div class="hidden-protocol" @click="toggleSupport" title="建立连接">
-      [ <span class="protocol-icon">⚡</span> 支持/连接 <span class="protocol-icon">⚡</span>]
-    </div>
+
 
     <Transition name="fade">
       <div v-if="showSupport" class="support-modal-mask" @click.self="closeSupport">
@@ -133,7 +132,7 @@ const closeSupport = () => {
 }
 
 .system-log {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   font-family: 'Courier New', Courier, monospace;
   font-size: 11px;
   color: #95a5a6;
@@ -208,24 +207,26 @@ const closeSupport = () => {
    新增样式：隐藏协议与模态框
    ========================================= */
 
-/* 修改后的样式：更可见，但保持低调 */
+/* 修改后的样式 */
 .hidden-protocol {
-  margin-top: 20px;
-  /* 增加一点顶部间距，和 CAEVAT EMPTOR 分开 */
+  /* 1. 让它独占一行，解决不换行的问题 */
+  display: block; 
+  
+  /* 2. 让宽度适应内容，而不是撑满整行（保持按钮的紧凑感） */
+  width: fit-content; 
+  
+  /* 3. 因为变成了 block，需要用 margin auto 来居中 */
+  margin: 10px auto; 
+  
+  /* ...以下保持原样... */
   font-size: 10px;
-  /* 字体稍微大一点点，保证可读 */
   color: #95a5a6;
-  /* 使用水泥灰，看起来像是不重要的信息 */
   cursor: pointer;
   opacity: 0.8;
-  /* 提高不透明度，现在肉眼直接可见 */
   transition: all 0.3s ease;
   letter-spacing: 1.5px;
   font-family: 'Courier New', monospace;
-  /* 代码风格字体 */
-  display: inline-block;
   padding: 5px;
-  /* 增加点击区域 */
 }
 
 /* 交互反馈：只有按下去或者鼠标放上去才会变色 */
@@ -386,17 +387,20 @@ const closeSupport = () => {
 .option-card.donation-complex {
   display: flex;
   flex-direction: column;
-  padding: 0; /* 清除默认内边距，由内部控制 */
+  padding: 0;
+  /* 清除默认内边距，由内部控制 */
   gap: 0;
-  cursor: default; /* 外层不显示手型，手型给链接部分 */
-  overflow: hidden; /* 保证圆角 */
+  cursor: default;
+  /* 外层不显示手型，手型给链接部分 */
+  overflow: hidden;
+  /* 保证圆角 */
   background: #fff;
   transition: box-shadow 0.3s ease;
 }
 
 /* 鼠标放上去时，整体稍微浮起一点点 */
 .donation-complex:hover {
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   border-color: #bdc3c7;
   transform: translateY(-2px);
 }
@@ -438,14 +442,16 @@ const closeSupport = () => {
 .donation-qr-part {
   padding: 12px;
   display: flex;
-  flex-direction: column; /* 垂直排列图片和文字 */
+  flex-direction: column;
+  /* 垂直排列图片和文字 */
   align-items: center;
   background-color: #fff;
 }
 
 /* 二维码图片：小巧精致 */
 .mini-qr {
-  width: 100px; /* 控制在 100px，非常内敛 */
+  width: 100px;
+  /* 控制在 100px，非常内敛 */
   height: 100px;
   object-fit: contain;
   border-radius: 6px;
@@ -465,6 +471,7 @@ const closeSupport = () => {
   color: #bdc3c7;
   font-family: 'Courier New', monospace;
   letter-spacing: 1px;
-  transform: scale(0.9); /* 字体再小一点 */
+  transform: scale(0.9);
+  /* 字体再小一点 */
 }
 </style>
