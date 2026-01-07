@@ -18,11 +18,11 @@ const closeSupport = () => {
   <footer class="app-footer">
     <div class="divider"></div>
     <div class="system-log">
-      <span class="log-tag">[ System Patch v1.1 ]</span>
+      <span class="log-tag">[ System Patch v1.2 ]</span>
       <p>
-        贪婪阈值已解除锁定，许愿字数扩充至 80。
+        因果律稳压器已上线。为防止现实扭曲场过载，系统强制执行频率熔断协议。
         <span class="creepy-note">
-          （注：允许你编织更复杂的欲望罗网，但请记住...网越大，作为猎物的你就越难逃脱。）
+          （注：不要试图短时间内透支太多“可能性”。当欲望的噪音太大时……往往就听不见代价靠近的脚步声了。）
         </span>
       </p>
     </div>
@@ -66,7 +66,7 @@ const closeSupport = () => {
               <div class="card-icon">🌀</div>
               <div class="card-content">
                 <div class="card-title">潜入内部圈子</div>
-                <div class="card-desc">加入我的微博专属社群，与更多有趣的灵魂闲聊，或许能发现系统的后门w</div>
+                <div class="card-desc">加入微博专属社群，与更多有趣的灵魂闲聊，或许能发现系统的后门 w</div>
                 <div class="card-meta">ACCESS: YEARLY PASS</div>
               </div>
             </a>
@@ -75,7 +75,7 @@ const closeSupport = () => {
               <div class="card-icon">☕</div>
               <div class="card-content">
                 <div class="card-title">投喂单次补给</div>
-                <div class="card-desc">为LLM服务提供一点算力，或者请我喝杯饮料，让许愿器继续流转。</div>
+                <div class="card-desc">为LLM服务提供一点算力，或者请我喝杯可乐，让许愿器继续流转。</div>
                 <div class="card-meta">DONATION: OPEN</div>
               </div>
             </a>
@@ -128,7 +128,7 @@ const closeSupport = () => {
   padding: 10px;
   border-radius: 4px;
   display: inline-block;
-  max-width: 95%;
+  max-width: 100%;
 }
 
 .log-tag {
