@@ -115,7 +115,8 @@ onMounted(async () => {
         </div>
 
         <div class="promo-link">
-          完美许愿器 · wish.closeai.moe
+          <div class="link-text">完美许愿器 · wish.closeai.moe</div>
+          <div class="author-credit">@阿尼亚是安妮亞</div>
         </div>
       </div>
     </div>
@@ -270,15 +271,30 @@ onMounted(async () => {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* 推广链接样式 */
+/* 修改原有的 .promo-link，并新增下级样式 */
 .promo-link {
   text-align: center;
+  font-family: monospace;
+  margin-top: 8px;
+  /* 使用 Flex 让两行文字垂直居中排列 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px; /* 两行文字之间的间距 */
+}
+
+.promo-link .link-text {
   font-size: 0.75rem;
   color: #bdc3c7;
-  margin-top: 8px;
-  font-family: monospace;
   letter-spacing: 1px;
   opacity: 0.8;
+}
+
+.promo-link .author-credit {
+  font-size: 0.7rem; /* 稍微小一点，作为署名 */
+  color: #95a5a6;    /* 稍微深一点或者淡一点的灰色，看你喜好 */
+  letter-spacing: 0.5px;
+  opacity: 0.6;      /* 降低一点存在感，显得更精致 */
 }
 
 .action-buttons {
@@ -333,29 +349,37 @@ onMounted(async () => {
 /* 新增样式：底部统计提示 */
 .stats-hint {
   text-align: center;
-  margin-top: 1rem;       /* 与按钮拉开一点距离 */
-  margin-bottom: 1rem;    /* 底部留白 */
-  font-size: 0.8rem;      /* 字号偏小，显得精致 */
-  color: #7f8c8d;         /* 使用低调的灰色，不刺眼 */
-  line-height: 1.6;       /* 行高拉开，防止两行挤在一起 */
+  margin-top: 1rem;
+  /* 与按钮拉开一点距离 */
+  margin-bottom: 1rem;
+  /* 底部留白 */
+  font-size: 0.8rem;
+  /* 字号偏小，显得精致 */
+  color: #7f8c8d;
+  /* 使用低调的灰色，不刺眼 */
+  line-height: 1.6;
+  /* 行高拉开，防止两行挤在一起 */
 }
 
 /* 数字强调 */
 .stats-hint .num {
-  color: #2c3e50;         /* 深色突出数字 */
+  color: #2c3e50;
+  /* 深色突出数字 */
   font-weight: bold;
-  font-family: 'Courier New', monospace; /* 等宽字体增加一点“系统数据”的感觉 */
+  font-family: 'Courier New', monospace;
+  /* 等宽字体增加一点“系统数据”的感觉 */
   margin: 0 2px;
 }
 
 /* 移动端适配微调 */
 @media (max-width: 640px) {
   /* ...原有移动端样式... */
-  
+
   .stats-hint {
-    font-size: 0.75rem;   /* 手机上字体再稍微小一点点 */
-    padding: 0 10px;      /* 防止文字贴边 */
+    font-size: 0.75rem;
+    /* 手机上字体再稍微小一点点 */
+    padding: 0 10px;
+    /* 防止文字贴边 */
   }
 }
-
 </style>

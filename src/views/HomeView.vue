@@ -175,5 +175,4 @@ function handleRestart() {
   opacity: 0;
 }
 </style>
->>>>+++ REPLACE
 
