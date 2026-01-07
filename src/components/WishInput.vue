@@ -1,8 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { useWishEnergy } from '../composables/useWishEnergy';
 
 // 定义组件事件
 const emit = defineEmits(['submit']);
+
+const { count, countdownStr, consumeEnergy, MAX_ENERGY } = useWishEnergy();
 
 // 愿望输入
 const wishInput = ref('');
@@ -19,16 +22,18 @@ const exampleWishes = [
 
 // 处理提交
 function handleSubmit() {
-  if (!wishInput.value.trim() || isSubmitting.value) return;
+  if (!wishInput.value.trim() || isSubmitting.value || count.value <= 0) return;
   if (wishInput.value.length > maxLength) return;
   
-  isSubmitting.value = true;
-  emit('submit', wishInput.value);
-  
-  // 重置状态
-  setTimeout(() => {
-    isSubmitting.value = false;
-  }, 500);
+  if (consumeEnergy()) {
+    isSubmitting.value = true;
+    emit('submit', wishInput.value);
+    
+    // 重置状态
+    setTimeout(() => {
+      isSubmitting.value = false;
+    }, 500);
+  }
 }
 
 // 填充示例愿望
@@ -59,13 +64,30 @@ const remainingChars = computed(() => {
         {{ remainingChars }}
       </span>
     </div>
+
+    <div class="energy-container">
+      <div class="slots">
+        <div 
+          v-for="i in MAX_ENERGY" 
+          :key="i" 
+          class="dot" 
+          :class="{ active: i <= count }"
+        ></div>
+      </div>
+      <div v-if="count < MAX_ENERGY" class="status-text">
+        RECHARGING {{ countdownStr }}
+      </div>
+    </div>
     
     <button 
       @click="handleSubmit" 
       class="submit-button"
-      :disabled="!wishInput.trim() || wishInput.length > maxLength || isSubmitting"
+      :disabled="!wishInput.trim() || wishInput.length > maxLength || isSubmitting || count <= 0"
     >
-      <span v-if="!isSubmitting">签订契约</span>
+      <template v-if="!isSubmitting">
+        <span v-if="count > 0">签订契约</span>
+        <span v-else>能量不足</span>
+      </template>
       <span v-else class="loading-dots">因果计算中<span>.</span><span>.</span><span>.</span></span>
     </button>
     
@@ -138,6 +160,41 @@ const remainingChars = computed(() => {
 
 .char-counter.warning {
   color: #e74c3c;
+}
+
+.energy-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.slots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #2c3e50;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background-color: #8e44ad;
+  border-color: #8e44ad;
+  box-shadow: 0 0 8px rgba(142, 68, 173, 0.5);
+}
+
+.status-text {
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  font-family: monospace;
+  letter-spacing: 1px;
 }
 
 .submit-button {

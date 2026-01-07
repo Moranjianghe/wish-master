@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import { useWishEnergy } from '../composables/useWishEnergy';
 import HeaderLogo from '../components/HeaderLogo.vue';
 import WishInput from '../components/WishInput.vue';
 import StepFlow from '../components/StepFlow.vue';
@@ -16,6 +17,8 @@ const currentStep = ref(0);
 const wishText = ref('');
 const isLoading = ref(false);
 const error = ref(null);
+
+const { refundEnergy } = useWishEnergy();
 
 // 愿望实现结果数据
 const wishResult = reactive({
@@ -76,6 +79,8 @@ async function handleWishSubmit(wish) {
   } catch (err) {
     console.error(err);
     error.value = "系统在窥探命运时遭遇了不可抗力...请重试。";
+    // 出错后回滚能量
+    refundEnergy();
     // 出错后是否要重置回步骤0，看你喜好，这里暂时保留在当前界面方便看报错
     currentStep.value = 0;
   } finally {
