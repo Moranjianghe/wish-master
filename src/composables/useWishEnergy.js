@@ -2,10 +2,12 @@ import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 const STORAGE_KEY = 'wish_energy_status_v1';
 const MAX_ENERGY = 3;
+const MAX_STABILITY = 6;
 const RECOVER_INTERVAL = 10 * 60 * 1000; // 10 minutes in ms
 
 export function useWishEnergy() {
   const count = ref(MAX_ENERGY);
+  const stability = ref(MAX_STABILITY);
   const nextRecoverTime = ref(0);
   const now = ref(Date.now());
   let timer = null;
@@ -15,8 +17,9 @@ export function useWishEnergy() {
     if (stored) {
       try {
         const data = JSON.parse(stored);
-        count.value = data.count;
-        nextRecoverTime.value = data.nextRecoverTime;
+        count.value = data.count ?? MAX_ENERGY;
+        stability.value = data.stability ?? MAX_STABILITY;
+        nextRecoverTime.value = data.nextRecoverTime ?? 0;
       } catch (e) {
         console.error('Failed to parse energy data', e);
         initEnergy();
@@ -28,6 +31,7 @@ export function useWishEnergy() {
 
   const initEnergy = () => {
     count.value = MAX_ENERGY;
+    stability.value = MAX_STABILITY;
     nextRecoverTime.value = 0;
     saveToStorage();
   };
@@ -35,6 +39,7 @@ export function useWishEnergy() {
   const saveToStorage = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       count: count.value,
+      stability: stability.value,
       nextRecoverTime: nextRecoverTime.value
     }));
   };
@@ -45,14 +50,12 @@ export function useWishEnergy() {
 
     if (count.value < MAX_ENERGY && nextRecoverTime.value > 0) {
       if (currentTime >= nextRecoverTime.value) {
-        // Calculate how many periods have passed
         const passedTime = currentTime - nextRecoverTime.value;
         const recoveredNum = 1 + Math.floor(passedTime / RECOVER_INTERVAL);
         
         count.value = Math.min(MAX_ENERGY, count.value + recoveredNum);
         
         if (count.value < MAX_ENERGY) {
-          // Set next recover time based on the previous one to maintain precision
           nextRecoverTime.value = nextRecoverTime.value + (recoveredNum * RECOVER_INTERVAL);
         } else {
           nextRecoverTime.value = 0;
@@ -63,8 +66,8 @@ export function useWishEnergy() {
   };
 
   const consumeEnergy = () => {
-    loadFromStorage(); // 消耗前先同步
-    if (count.value <= 0) return false;
+    loadFromStorage();
+    if (count.value <= 0 || stability.value <= 0) return false;
 
     const currentTime = Date.now();
     if (count.value === MAX_ENERGY) {
@@ -77,7 +80,7 @@ export function useWishEnergy() {
   };
 
   const refundEnergy = () => {
-    loadFromStorage(); // 返还前先同步
+    loadFromStorage();
     if (count.value < MAX_ENERGY) {
       count.value += 1;
       if (count.value === MAX_ENERGY) {
@@ -85,6 +88,20 @@ export function useWishEnergy() {
       }
       saveToStorage();
     }
+  };
+
+  const decreaseStability = () => {
+    loadFromStorage();
+    if (stability.value > 0) {
+      stability.value -= 1;
+      saveToStorage();
+    }
+  };
+
+  const recoverStability = () => {
+    loadFromStorage();
+    stability.value = MAX_STABILITY;
+    saveToStorage();
   };
 
   const countdownStr = computed(() => {
@@ -117,9 +134,13 @@ export function useWishEnergy() {
 
   return {
     count,
+    stability,
     countdownStr,
     consumeEnergy,
     refundEnergy,
-    MAX_ENERGY
+    decreaseStability,
+    recoverStability,
+    MAX_ENERGY,
+    MAX_STABILITY
   };
 }

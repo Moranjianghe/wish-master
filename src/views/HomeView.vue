@@ -18,7 +18,7 @@ const wishText = ref('');
 const isLoading = ref(false);
 const error = ref(null);
 
-const { refundEnergy } = useWishEnergy();
+const { refundEnergy, decreaseStability, recoverStability } = useWishEnergy();
 
 // 愿望实现结果数据
 const wishResult = reactive({
@@ -61,10 +61,14 @@ async function handleWishSubmit(wish) {
 
     // 4. 处理返回结果
     if (data.result && data.result.category === 'block') {
-      refundEnergy(); // 审查未通过也返还能量
+      refundEnergy(); // 审查未通过返还紫色能量
+      decreaseStability(); // 审查未通过扣除 1 点灵魂稳定性
       router.push('/error'); // 违规处理
       return;
     }
+
+    // 成功完成许愿，恢复灵魂稳定性
+    recoverStability();
 
     // 拿到结果
     wishResult.confirmed_wish = data.result.confirmed_wish;
@@ -175,4 +179,3 @@ function handleRestart() {
   opacity: 0;
 }
 </style>
-

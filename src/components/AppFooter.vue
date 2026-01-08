@@ -17,13 +17,6 @@ const closeSupport = () => {
 <template>
   <footer class="app-footer">
     <div class="divider"></div>
-    <div class="system-log">
-      <span class="log-tag">[ System Patch v1.2 ]</span>
-      <p>
-        因果律稳压器已上线。防止现实扭曲场过载。
-      </p>
-    </div>
-
     <div class="hidden-protocol" @click="toggleSupport" title="建立连接">
       [ <span class="protocol-icon">⚡</span> 支持/连接 <span class="protocol-icon">⚡</span>]
     </div>
@@ -45,8 +38,6 @@ const closeSupport = () => {
     </div>
 
     <div class="warning-text">CAVEAT EMPTOR</div>
-
-
 
     <Transition name="fade">
       <div v-if="showSupport" class="support-modal-mask" @click.self="closeSupport">
