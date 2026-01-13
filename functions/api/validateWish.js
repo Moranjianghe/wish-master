@@ -8,6 +8,7 @@ export async function onRequest(context) {
 
   const allowedOrigins = [
     'https://freewish.moranxia.com',
+    'wish-master.moanxia.workers.dev',
     //'https://wish.closeai.moe',
     //'https://deepluck.closeai.moe',
     'http://127.0.0.1:8788',
