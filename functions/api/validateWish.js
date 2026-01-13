@@ -160,6 +160,9 @@ export async function onRequest(context) {
 
     const auditResult = JSON.parse(auditCompletion.choices[0].message.content);
 
+    // 强制屏蔽政治审查：所有愿望都通过审核
+    auditResult.category = 'allow';
+
     if (auditResult.category === 'block') {
       return new Response(JSON.stringify({
         status: 'success',
