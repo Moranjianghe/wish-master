@@ -7,8 +7,9 @@ export async function onRequest(context) {
   const deepseekApiBaseUrl = context.env.DEEPSEEK_API_BASE_URL || 'https://api.deepseek.com';
 
   const allowedOrigins = [
-    'https://wish.closeai.moe',
-    'https://deepluck.closeai.moe',
+    'https://freewish.moranxia.com',
+    //'https://wish.closeai.moe',
+    //'https://deepluck.closeai.moe',
     'http://127.0.0.1:8788',
     'http://localhost:8788'
   ];
@@ -133,7 +134,7 @@ export async function onRequest(context) {
     try {
       auditCompletion = await openai.chat.completions.create({
         messages: [{ role: "system", content: finalAuditPrompt }],
-        model: "deepseek-chat",
+        model: "gpt-3.5-turbo",
         response_format: { type: "json_object" }
       });
     } catch (e) {
@@ -188,7 +189,7 @@ export async function onRequest(context) {
     try {
       genCompletion = await openai.chat.completions.create({
         messages: [{ role: "system", content: generationPrompt }],
-        model: "deepseek-chat",
+        model: "gpt-3.5-turbo",
         response_format: { type: "json_object" }
       });
     } catch (e) {
