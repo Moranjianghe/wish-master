@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "dev:api": "npm run build && npx wrangler pages dev dist"
+    "dev:api": "npm run build && npx wrangler pages dev dist",
+    "deploy:pages": "npx wrangler pages deploy ./dist --project-name=wish-master --branch=main"
   },
   "dependencies": {
     "@zumer/snapdom": "^2.0.1",
